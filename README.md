@@ -34,56 +34,48 @@
 #### 1. PHP 设置代理
 
 ```php
-$proxy_http = "http://138.68.165.154:3128";
-$proxy_https = "https://202.53.169.199:3128";
-$proxy_socks4 = "socks4://94.158.70.129:1080";
-$proxy_socks5 = "socks5://173.230.95.147:45454";
+Php http/sock5:
 
-$mimvp_url = "http://proxy.mimvp.com/exist.php";
-$mimvp_url2 = "https://proxy.mimvp.com/exist.php";
+// 要访问的目标页面
+        $targetUrl = "http://baidu.com";
 
-// curl
-proxy_curl($proxy_http, $mimvp_url);		// http
-proxy_curl($proxy_https, $mimvp_url);		// https
-proxy_curl($proxy_socks4, $mimvp_url);		// socks4
-proxy_curl($proxy_socks5, $mimvp_url);		// socks5
+        // 代理服务器
+        $proxyServer = "http://ip:port";
 
-// php curl 支持 http、https、socks4、socks5
-function proxy_curl($proxy_uri, $mimvp_url) {
-	$key = explode('://', $proxy_uri)[0];		// http
-	$proxy= explode('://', $proxy_uri)[1];		// ip:port
-	echo "proxy_uri :  $proxy_uri; key : $key, proxy : $proxy ";
-	
-	$ch = curl_init ();
-	curl_setopt ( $ch, CURLOPT_URL, $mimvp_url);
-	curl_setopt ( $ch, CURLOPT_HTTPPROXYTUNNEL, false );
-	curl_setopt ( $ch, CURLOPT_PROXY, $proxy );
-	
-	if ($key == "http") {
-		curl_setopt ( $ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP );		// http
-	}
-	elseif ($key == "https") {
-		curl_setopt ( $ch, CURLOPT_SSL_VERIFYHOST, 2 );	
-		curl_setopt ( $ch, CURLOPT_SSL_VERIFYPEER, false );
-		curl_setopt ( $ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTPS );	// https
-	}
-	elseif ($key == "socks4") {
-		curl_setopt ( $ch, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS4 );	// socks4
-	}
-	elseif ($key == "socks5") {
-		curl_setopt ( $ch, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS5 );	// socks5
-	}
-	else {
-		curl_setopt ( $ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP );
-	}
-	
-	curl_setopt ( $ch, CURLOPT_TIMEOUT, 60 );
-	curl_setopt ( $ch, CURLOPT_CONNECTTIMEOUT, 60 );
-	curl_setopt ( $ch, CURLOPT_HEADER, false );
-	curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );	// 返回网页内容
-	
-	$result = curl_exec ( $ch );
-}
+        // 隧道身份信息
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, $targetUrl);
+
+        curl_setopt($ch, CURLOPT_HTTPPROXYTUNNEL, false);
+
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+
+        // 设置代理服务器
+//        curl_setopt($ch, CURLOPT_PROXYTYPE, 0); //http
+
+        curl_setopt($ch, CURLOPT_PROXYTYPE, 5); //sock5
+
+        curl_setopt($ch, CURLOPT_PROXY, $proxyServer);
+
+        // 设置隧道验证信息
+        curl_setopt($ch, CURLOPT_PROXYAUTH, CURLAUTH_BASIC);
+
+        curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727;)");
+
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3);
+
+        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+
+        curl_setopt($ch, CURLOPT_HEADER, true);
+
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $result = curl_exec($ch);
+
+        curl_close($ch);
+
+        var_dump($result);
 ```
   
 <br/>      
@@ -92,79 +84,42 @@ function proxy_curl($proxy_uri, $mimvp_url) {
 #### 2. Python 设置代理
 
 ```python
-proxy_http = {"http":"http://138.68.165.154:3128"}
-proxy_https = {"https":"http://191.252.103.93:8080"}
-proxy_socks4 = {'socks4': '218.58.52.158:1088'} 
-proxy_socks5 = {'socks5': '68.234.190.150:45454'}
+Python http/sock5:
 
-mimvp_url = "http://proxy.mimvp.com/exist.php"
-mimvp_url2 = "https://proxy.mimvp.com/exist.php"
+#coding=utf-8
+import requests
 
-# 全局取消ssl证书验证，防止打开未验证的https网址抛出异常
-# urllib2.URLError: [urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed (_ssl.c:590)]
-ssl._create_default_https_context = ssl._create_unverified_context
-            
+#请求地址
+targetUrl = "http://baidu.com"
 
-# urllib2 支持 http, https
-def test_http(proxy, mimvp_url):
-    handler = urllib2.ProxyHandler(proxy)
-    opener = urllib2.build_opener(handler)
-    f = opener.open(mimvp_url, timeout=30)
-    content = f.read()
-    print content
-    print len(content)
-    f.close()
-    opener.close()
-    
-    
-# urllib 支持 http, https
-def test_http2(proxy, mimvp_url):
-    opener = urllib.FancyURLopener(proxy)
-    f = opener.open(mimvp_url)                 #### mimvp_url 只能是http网页，不能是https网页
-    content = f.read()
-    print content
-    print len(content)
-    f.close()
-    opener.close()
-    
-    
-# socks4
-def test_socks4(socks4, mimvp_url):
-    socks4_ip = socks4.split(":")[0]
-    socks4_port = int(socks4.split(":")[1])
-    socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS4, socks4_ip, socks4_port)
-    socket.socket = socks.socksocket
-    
-    content = urllib2.urlopen(mimvp_url, timeout=30).read()
-    print content
-    print len(content)
-    
-    
-# socks5
-def test_socks5(socks5, mimvp_url):
-    socks5_ip = socks5.split(":")[0]
-    socks5_port = int(socks5.split(":")[1])
-    socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, socks5_ip, socks5_port)
-    socket.socket = socks.socksocket
-    
-    content = urllib2.urlopen(mimvp_url, timeout=30).read()
-    print content
-    print len(content)	
-    
-    
-if __name__ == "__main__":
-    # http, https
-    test_http(proxy_http, mimvp_url)   
-    test_http(proxy_https, mimvp_url2)    
-    
-    # http
-    test_http2(proxy_http, mimvp_url)   
-      
-    # socks4
-    test_socks4(proxy_socks4['socks4'], mimvp_url)
-     
-    # socks5
-    test_socks5(proxy_socks5['socks5'], mimvp_url)
+#代理服务器
+proxyHost = "ip"
+proxyPort = "port"
+
+proxyMeta = "http://%(host)s:%(port)s" % {
+
+    "host" : proxyHost,
+    "port" : proxyPort,
+}
+
+#pip install -U requests[socks]  socks5代理
+# proxyMeta = "socks5://%(host)s:%(port)s" % {
+
+#     "host" : proxyHost,
+
+#     "port" : proxyPort,
+
+# }
+
+proxies = {
+
+    "http"  : proxyMeta,
+    "https" : proxyMeta,
+}
+
+resp = requests.get(targetUrl, proxies=proxies)
+print resp.status_code
+print resp.text
 ```
 	
 <br/>      
