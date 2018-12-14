@@ -1,0 +1,3 @@
+Phantomjs http/socks5:
+
+phantomjs --proxy=ip:port --proxy-type=[http|socks5|none] demo.js
