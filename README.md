@@ -210,104 +210,326 @@ static class MyAuthenticator extends Authenticator {
 <br/>      
 	
 	
-#### 4. Shell 设置代理
+#### 4. Go 设置代理
 
-```sh
-#!/bin/bash
-#
-# curl 支持 http、https、socks4、socks5
-# wget 支持 http、https
-#
-# 米扑代理示例：
-# https://proxy.mimvp.com/demo2.php
-#
-# 米扑代理购买：
-# https://proxy.mimvp.com
-#
-# mimvp.com
-# 2015-11-09
+```
+package main
 
+import (
+	"fmt"
+	"io/ioutil"
+	"net/http"
+	"net/url"
+)
 
-# http代理格式 		http_proxy=http://IP:Port
-# https代理格式 		https_proxy=http://IP:Port
+//sock5代理
+func socksproxy() {
+	urli := url.URL{}
+	urlproxy, _ := urli.Parse("http://测试ip:端口")
+	client := &http.Client{
+		Transport: &http.Transport{
+			Proxy: http.ProxyURL(urlproxy),
+		},
+	}
+	rqt, err := http.NewRequest("GET", "http://myip.top", nil)
+	if err != nil {
+		println("接口获取IP失败!")
+		return
+	}
 
-{'http': 'http://120.77.176.179:8888'}
-curl -m 30 --retry 3 -x http://120.77.176.179:8888 http://proxy.mimvp.com/exist.php        				# http_proxy
-wget -T 30 --tries 3 -e "http_proxy=http://120.77.176.179:8888" http://proxy.mimvp.com/exist.php  		# http_proxy
+	rqt.Header.Add("User-Agent", "Lingjiang")
+	//处理返回结果
+	response, _ := client.Do(rqt)
+	defer response.Body.Close()
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return
+	}
 
-{'https': 'http://46.105.214.133:3128'}
-curl -m 30 --retry 3 --proxy-insecure -x http://46.105.214.133:3128 -k https://proxy.mimvp.com/exist.php        			# https_proxy
-wget -T 30 --tries 3 --no-check-certificate -e "https_proxy=http://46.105.214.133:3128" https://proxy.mimvp.com/exist.php	# https_proxy
+	fmt.Println("socks5:", string(body))
+	return
 
-    
-# curl  支持socks
-{'socks4': '101.255.17.145:1080'}
-curl -m 30 --retry 3 --socks4 101.255.17.145:1080 http://proxy.mimvp.com/exist.php
-    
-{'socks5': '82.164.233.227:45454'}
-curl -m 30 --retry 3 --socks5 82.164.233.227:45454 http://proxy.mimvp.com/exist.php
+}
 
-# wget 不支持socks
+//http代理
+func httpproxy() {
+	urli := url.URL{}
+	urlproxy, _ := urli.Parse("http://测试ip:端口")
+	client := &http.Client{
+		Transport: &http.Transport{
+			Proxy: http.ProxyURL(urlproxy),
+		},
+	}
+	rqt, err := http.NewRequest("GET", "http://myip.top", nil)
+	if err != nil {
+		println("接口获取IP失败!")
+		return
+	}
 
+	rqt.Header.Add("User-Agent", "Lingjiang")
+	//处理返回结果
+	response, _ := client.Do(rqt)
+	defer response.Body.Close()
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return
+	}
 
-################### wget配置文件设置代理 ###################
+	fmt.Println("http:", string(body))
+	return
 
-vim ~/.wgetrc
+}
 
-http_proxy=http://120.77.176.179:8888:8080
-https_proxy=http://12.7.17.17:8888:8080
-use_proxy = on
-wait = 30
+//本机IP
+func httplocal() {
+	client := &http.Client{}
+	rqt, err := http.NewRequest("GET", "http://myip.top", nil)
+	if err != nil {
+		println("接口获取IP失败!")
+		return
+	}
 
-wget -T 30 --tries 3 http://proxy.mimvp.com
+	rqt.Header.Add("User-Agent", "Lingjiang")
+	//处理返回结果
+	response, _ := client.Do(rqt)
+	defer response.Body.Close()
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return
+	}
 
+	fmt.Println("本机:", string(body))
+	return
 
-################### 设置临时局部代理 ###################
-
-# proxy no auth
-export http_proxy=http://120.77.176.179:8888:8080
-export https_proxy=http://12.7.17.17:8888:8080
-
-# proxy auth
-export http_proxy=http://username:password@120.77.176.179:8888:8080
-export https_proxy=http://username:password@12.7.17.17:8888:8080
-
-
-# 取消设置
-unset http_proxy
-unset https_proxy
-
-
-################### 设置系统全局代理 ###################
-
-# 修改 /etc/profile，保存并重启服务器
-sudo vim /etc/profile		# 所有人有效
-或
-sudo vim ~/.bashrc			# 所有人有效
-或
-vim ~/.bash_profile			# 个人有效
+}
+func main() {
+	httplocal()
+	httpproxy()
+	socksproxy()
+}
+```
 	
-	
-# proxy no auth
-export http_proxy=http://120.77.176.179:8888:8080
-export https_proxy=http://12.7.17.17:8888:8080
-
-# proxy auth
-export http_proxy=http://username:password@120.77.176.179:8888:8080
-export https_proxy=http://username:password@12.7.17.17:8888:8080
-
-source /etc/profile
-或
-source ~/.bashrc
-或
-source ~/.bash_profile
+<br/>
 
 
-sudo reboot
+#### 5. CSharp 设置代理
+
+```
+using System;
+
+using System.Net;
+using System.Net.Http;
+using System.Collections.Generic;
+
+namespace ClientProxyDemo
+{
+    class TestProxy
+    {
+        static void Main(string[] args)
+        {
+            String proxyServer = "http://xxx:xxx"; // http://host:port, 例(http://1.2.3.4:7777), host可以是域名或者ip,port是代理端口号
+            var proxy = new WebProxy(proxyServer);
+            HttpClientHandler httpClientHandler = new HttpClientHandler()
+            {
+                Proxy = proxy
+            };
+            var httpCient = new HttpClient(httpClientHandler);
+            // 增加头部
+            httpCient.DefaultRequestHeaders.Add("Header-Key", "header-vaule");
+
+            TestProxy testProxy = new TestProxy();
+            testProxy.testGet(httpCient);
+            // testProxy.testPost(httpCient);
+        }
+
+
+        // 测试get请求
+        public void testGet(HttpClient httpClient)
+        {
+            String targetUrl = "http://httpbin.org/get";
+            var httpResult = httpClient.GetStringAsync(targetUrl).Result;
+        }
+
+        // 测试post请求
+        public void testPost(HttpClient httpClient)
+        {
+            String targetUrl = "http://httpbin.org/post";
+            List<KeyValuePair<string, string>> formData = new List<KeyValuePair<string, string>>();
+            formData.Add(new KeyValuePair<string, string>("key1", "vaule1"));
+            formData.Add(new KeyValuePair<string, string>("key2", "vaule2"));
+            var formContent = new FormUrlEncodedContent(formData.ToArray());
+            var responseMsg = httpClient.PostAsync(targetUrl, formContent).Result;
+            var httpResult = responseMsg.Content.ReadAsStringAsync().Result;
+        }
+    }
+}
 ```
 	
 <br/>      
+
+
+#### 6. C 设置代理
+
+```
+#include "stdafx.h"
+#include "curl/curl.h"
+#pragma comment(lib, "libcurl.lib")
+static size_t write_buff_data(char *buffer, size_t size, size_t nitems, void *outstream)
+{
+	memcpy(outstream, buffer, nitems*size);
+	return nitems*size;
+}
+/*
+使用http代理
+*/
+int GetUrlHTTP(char *url, char *buff)
+{
+	CURL *curl;
+	CURLcode res;
+	curl = curl_easy_init();
+	if (curl)
+	{
+		curl_easy_setopt(curl, CURLOPT_PROXY,"http://测试ip:端口");
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void*)buff);
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_buff_data);
+		curl_easy_setopt(curl, CURLOPT_URL, url);
+		curl_easy_setopt(curl, CURLOPT_LOW_SPEED_TIME, 10L);
+		curl_easy_setopt(curl, CURLOPT_LOW_SPEED_LIMIT, 50L);
+		curl_easy_setopt(curl, CURLOPT_MAX_RECV_SPEED_LARGE, 2000000L);/*下载最高速度*/
+		res = curl_easy_perform(curl);
+		curl_easy_cleanup(curl);
+		if (res == CURLE_OK){
+			return res;
+		}else {
+			printf("错误代码:%d\n", res);
+			MessageBox(NULL, TEXT("获取IP错误"), TEXT("助手"), MB_ICONINFORMATION | MB_YESNO);
+		}
+	}
+	return res;
+}
+/*
+使用socks5代理
+*/
+int GetUrlSocks5(char *url, char *buff)
+{
+	CURL *curl;
+	CURLcode res;
+	curl = curl_easy_init();
+	if (curl)
+	{
+		curl_easy_setopt(curl, CURLOPT_PROXY, "socks5://测试ip:端口");
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void*)buff);
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_buff_data);
+		curl_easy_setopt(curl, CURLOPT_URL, url);
+		curl_easy_setopt(curl, CURLOPT_LOW_SPEED_TIME, 10L);
+		curl_easy_setopt(curl, CURLOPT_LOW_SPEED_LIMIT, 50L);
+		curl_easy_setopt(curl, CURLOPT_MAX_RECV_SPEED_LARGE, 2000000L);/*下载最高速度*/
+		res = curl_easy_perform(curl);
+		curl_easy_cleanup(curl);
+		if (res == CURLE_OK) {
+			return res;
+		}
+		else {
+			printf("错误代码:%d\n", res);
+			MessageBox(NULL, TEXT("获取IP错误"), TEXT("助手"), MB_ICONINFORMATION | MB_YESNO);
+		}
+	}
+	return res;
+}
+int GetUrl(char *url, char *buff)
+{
+	CURL *curl;
+	CURLcode res;
+	curl = curl_easy_init();
+	if (curl)
+	{
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void*)buff);
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_buff_data);
+		curl_easy_setopt(curl, CURLOPT_URL, url);
+		curl_easy_setopt(curl, CURLOPT_LOW_SPEED_TIME, 10L);
+		curl_easy_setopt(curl, CURLOPT_LOW_SPEED_LIMIT, 50L);
+		curl_easy_setopt(curl, CURLOPT_MAX_RECV_SPEED_LARGE, 2000000L);/*下载最高速度*/
+		res = curl_easy_perform(curl);
+		curl_easy_cleanup(curl);
+		if (res == CURLE_OK)
+		{
+			return res;
+		}
+		else {
+			printf("错误代码:%d\n", res);
+			MessageBox(NULL, TEXT("获取IP错误"), TEXT("助手"), MB_ICONINFORMATION | MB_YESNO);
+		}
+	}
+	return res;
+}
+int main()
+{
+	char *buff=(char*)malloc(1024*1024);
+	memset(buff, 0, 1024 * 1024);
+
+	GetUrl("http://baidu.com", buff);
+	printf("不使用代理：%s\n", buff);
+
+	memset(buff, 0, 1024 * 1024);
+	GetUrlHTTP("http://baidu.com", buff);
+	printf("http结果：%s\n", buff);
+
+	memset(buff, 0,1024 * 1024);
+	GetUrlSocks5("http://baidu.com", buff);
+	printf("socks5结果：%s\n", buff);
+
+
+	Sleep(1000 * 1000);
+	free(buff);
+    return 0;
+}
+```
 	
+<br/> 
+
+
+
+#### 7. PhantomJs 设置代理
+
+```
+phantomjs --proxy=ip:port --proxy-type=[http|socks5|none] demo.js
+```
+	
+<br/>
+
+
+#### 8. Seleniumpython 设置代理
+
+```
+#coding=utf-8
+from selenium import webdriver
+
+# 代理服务器
+proxyHost = "ip"
+proxyPort = "port"
+proxyType='http' #socks5
+
+# 代理隧道验证信息
+service_args = [
+    "--proxy-type=%s" % proxyType,
+    "--proxy=%(host)s:%(port)s" % {
+        "host" : proxyHost,
+        "port" : proxyPort,
+    }
+    ]
+
+# 要访问的目标页面
+targetUrl = "http://baidu.com"
+driver = webdriver.PhantomJS(service_args=service_args)
+driver.get(targetUrl)
+
+print driver.title
+print driver.page_source.encode("utf-8")
+driver.quit()
+            
+```
+	
+<br/>       	
 	
 #### 5. 易语言 设置代理
 
