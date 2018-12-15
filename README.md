@@ -118,92 +118,149 @@ print resp.text
 #### 3. Java 设置代理
 
 ```java
-@SuppressWarnings({ "serial" })
-public static HashMap proxyMap = new HashMap() {
-	{
-		put("http", "138.68.161.14:3128");
-		put("https", "104.236.120.183:8080");
-		put("socks4", "113.7.118.112:2346");
-		put("socks5", "61.135.155.82:1080");
-	}
-};
+#java http/sock5:
 
-final static String proxyUrl = "http://proxy.mimvp.com/exist.php";
-final static String proxyUrl2 = "https://proxy.mimvp.com/exist.php";
-	
-// 设置系统代理，支持全部协议 http，https，socks4，socks5
-private static int proxy_property(String proxyType, String proxyStr) {
-	int dataLen = 0;
 
-	String proxy_ip = proxyStr.split(":")[0];
-	String proxy_port = proxyStr.split(":")[1];
-	
-	Properties prop = System.getProperties();
-	
-	// http
-	if(proxyType.equals("http")){
-		prop.setProperty("http.proxySet", "true");
-		prop.setProperty("http.proxyHost", proxy_ip);
-		prop.setProperty("http.proxyPort", proxy_port);
-		prop.setProperty("http.nonProxyHosts", "localhost|192.168.0.*");
-	}
-	
-	// https
-	if (proxyType.equals("https")) {
-		prop.setProperty("https.proxyHost", proxy_ip);
-		prop.setProperty("https.proxyPort", proxy_port);
-	}
-    
-    // socks
-	if(proxyType.equals("socks4") || proxyType.equals("socks5")){
-        prop.setProperty("socksProxySet", "true");
-        prop.setProperty("socksProxyHost", proxy_ip);
-        prop.setProperty("socksProxyPort", proxy_port);
-	}
-    
-    // ftp
-	if(proxyType.equals("ftp")){
-        prop.setProperty("ftp.proxyHost", proxy_ip);
-        prop.setProperty("ftp.proxyPort", proxy_port);
-        prop.setProperty("ftp.nonProxyHosts", "localhost|192.168.0.*");
-	}
-    
-//        // auth 设置登录代理服务器的用户名和密码
-//        Authenticator.setDefault(new MyAuthenticator("user", "pwd"));
-    
-	try{
-		URL url = new URL(proxyUrl2);		// http://proxy.mimvp.com
-		URLConnection conn = url.openConnection();
-		conn.setConnectTimeout(30 * 1000);
-		
-		InputStream in = conn.getInputStream();
-		InputStreamReader reader = new InputStreamReader(in);
-		char[] ch = new char[1024];
-		int len = 0;
-		String data = "";
-		while((len = reader.read(ch)) > 0) {
-			String newData = new String(ch, 0, len);
-			data += newData;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.Authenticator;
+import java.net.InetSocketAddress;
+import java.net.PasswordAuthentication;
+import java.net.Proxy;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
+                    <!--------------------------------http代理------------------------------------------------->
+                    public class ClientProxyBasicHttp {
+
+	public static void main(String args[]) throws Exception {
+		// 目标地址
+		String targetUrl = "http://httpbin.org/get";
+
+		// 代理服务器
+		String proxyHost = "xxx";
+		int proxyPort = 0;
+
+		// http代理: Proxy.Type.HTTP, socks代理: Proxy.Type.SOCKS
+		Proxy.Type proxyType = Proxy.Type.HTTP;
+
+		// 代理验证
+		String proxyUser = "xxx";
+		String proxyPwd = "xxx";
+
+		try {
+			// 设置验证
+			Authenticator.setDefault(new ProxyAuthenticator(proxyUser, proxyPwd));
+
+			// 创建代理服务器
+			InetSocketAddress addr = new InetSocketAddress(proxyHost, proxyPort);
+			Proxy proxy = new Proxy(proxyType, addr);
+			// 访问目标网页
+			URL url = new URL(targetUrl);
+			URLConnection conn = url.openConnection(proxy);
+			// 读取返回数据
+			InputStream in = conn.getInputStream();
+			// 将返回数据转换成字符串
+			System.out.println(IO2String(in));
+
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		System.out.println("data : " + data);
-		dataLen = data.length();
-		
-	} catch(Exception e) {
-		e.printStackTrace();
+
 	}
-    return dataLen;
+
+	/**
+	 * 将输入流转换成字符串
+	 *
+	 * @param inStream
+	 * @return
+	 * @throws IOException
+	 */
+	public static String IO2String(InputStream inStream) throws IOException {
+		ByteArrayOutputStream result = new ByteArrayOutputStream();
+		byte[] buffer = new byte[1024];
+		int len;
+		while ((len = inStream.read(buffer)) != -1) {
+			result.write(buffer, 0, len);
+		}
+		String str = result.toString(StandardCharsets.UTF_8.name());
+		return str;
+	}
+
+	static class ProxyAuthenticator extends Authenticator {
+		private String authUser, authPwd;
+
+		public ProxyAuthenticator(String authUser, String authPwd) {
+			this.authUser = authUser;
+			this.authPwd = authPwd;
+		}
+
+        public PasswordAuthentication getPasswordAuthentication() {
+            return (new PasswordAuthentication(authUser, authPwd.toCharArray()));
+        }
+    }
 }
 
-static class MyAuthenticator extends Authenticator {
-    private String user = "";
-    private String password = "";
-    public MyAuthenticator(String user, String password) {
-        this.user = user;
-        this.password = password;
-    }
-    protected PasswordAuthentication getPasswordAuthentication() {
-        return new PasswordAuthentication(user, password.toCharArray());
-    }
+
+                    <!-------------------------------socks代理------------------------------------------>
+                    public class ClientProxyBasicSocks {
+
+	public static void main(String args[]) throws Exception {
+		// 目标地址
+		String targetUrl = "http://httpbin.org/get";
+
+		// 代理服务器
+		String proxyHost = "xxx";
+		int proxyPort = 0;
+
+		// http代理: Proxy.Type.HTTP, socks代理: Proxy.Type.SOCKS
+		Proxy.Type proxyType = Proxy.Type.SOCKS;
+		try {
+			// 创建代理服务器
+			InetSocketAddress addr = new InetSocketAddress(proxyHost, proxyPort);
+			Proxy proxy = new Proxy(proxyType, addr);
+			// 访问目标网页
+			URL url = new URL(targetUrl);
+			URLConnection conn = url.openConnection(proxy);
+			// 读取返回数据
+			InputStream in = conn.getInputStream();
+			// 将返回数据转换成字符串
+			System.out.println(IO2String(in));
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	/**
+	 * 将输入流转换成字符串
+	 *
+	 * @param inStream
+	 * @return
+	 * @throws IOException
+	 */
+	public static String IO2String(InputStream inStream) throws IOException {
+		ByteArrayOutputStream result = new ByteArrayOutputStream();
+		byte[] buffer = new byte[1024];
+		int len;
+		while ((len = inStream.read(buffer)) != -1) {
+			result.write(buffer, 0, len);
+		}
+		String str = result.toString(StandardCharsets.UTF_8.name());
+		return str;
+	}
+
 }
 ```
  
