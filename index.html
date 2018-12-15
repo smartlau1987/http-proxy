@@ -11,14 +11,8 @@
     <meta name="applicable-device" content="pc,mobile"/>
     <meta name="format-detection" content="telephone=no"/>
     <meta name="renderer" content="webkit"/>
-    <title>米扑代理之编程示例</title>
-    <meta name="Keywords"
-          content="米扑代理,p代理,代理ip,免费代理,免费代理ip,米扑科技,http代理,https代理,socks代理,代理ip购买,free proxy,爬虫代理,稳定代理,高匿代理,匿名代理,HTTP,HTTPS,SOCKS4,SOCKS5,QQ代理,国内外代理,稳定代理,高匿代理,高匿代理ip,爬虫代理ip,刷单代理,刷单代理ip,投票代理ip,私密代理ip,独享代理,独享代理ip,高速http代理,免费代理ip,代理服务器">
-    <meta name="description"
-          content="米扑代理，全球代理服务领导品牌，服务于1000多家企业客户，专业为您提供高品质代理IP，每天可免费提取HTTP、HTTPS、Socks代理，覆盖120多个国家、中国34个省市，BAT技术团队保证代理IP质量，最新免费代理ip每天实时更新，就找米扑代理！">
-    <meta name="author" content="米扑科技"/>
-    <meta name="version" content="mimvp-proxy-demo-1.0"/>
-    <meta name="copyright" content="2009-<?php echo date('Y');?> by mimvp.com">
+    <title>芝麻HTTP之编程示例</title>
+    <meta name="copyright" content="2009-<?php echo date('Y');?> by h.zhimaruanjian.com">
 
     <style>
 html, body {
@@ -156,7 +150,7 @@ input:checked + label {
 
 <div class="demo_content">
 
-    <h1>芝麻软件代理之编程示例</h1>
+    <h1>芝麻HTTP之编程示例</h1>
     <!--<h3><a target="_blank" href="http://proxy.mimvp.com/demo2.php#demo-main-div">http://proxy.mimvp.com/demo2.php</a></h3>-->
 
     <div class="desc">
@@ -789,7 +783,7 @@ import java.nio.charset.StandardCharsets;
 
 
             <section class="demo-section" id="content-python">
-                <h1 class="demo-h1">Python 示例<font style="font-weight:normal; font-size: 0.8em; color: #00f;">（PhantomJS）</font>
+                <h1 class="demo-h1">Python 示例<font style="font-weight:normal; font-size: 0.8em; color: #00f;">（python）</font>
                 </h1>
                 <pre><code class="language-python">#!/usr/bin/env python
 #Python http/sock5:
@@ -832,240 +826,37 @@ print resp.text
 		</code></pre>
             </section>
 
-            <section class="demo-section" id="content-selenium-java">
-                <h1 class="demo-h1">Selenium Java 示例<font style="font-weight:normal; font-size: 0.8em; color: #00f;">（FirefoxDriver
-                    + HtmlUnitDriver）</font></h1>
+            <section class="demo-section" id="content-selenium-python">
+                <h1 class="demo-h1">Seleniumpython 示例<font style="font-weight:normal; font-size: 0.8em; color: #00f;">
+                </font></h1>
                 <pre><code class="language-java">/**
- * Selenum FirefoxDriver 支持 http、socks5
- * 
- * 米扑代理示例：
- * http://proxy.mimvp.com/demo2.php
- * 
- * 米扑代理购买：
- * http://proxy.mimvp.com
- * 
- * mimvp.com
- * 2015-11-09
+ * Seleniumpython 支持 http、socks5
  */
+                    #coding=utf-8
+from selenium import webdriver
 
+# 代理服务器
+proxyHost = "ip"
+proxyPort = "port"
+proxyType='http' #socks5
 
-package com.mimvp;
+# 代理隧道验证信息
+service_args = [
+    "--proxy-type=%s" % proxyType,
+    "--proxy=%(host)s:%(port)s" % {
+        "host" : proxyHost,
+        "port" : proxyPort,
+    }
+    ]
 
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxProfile;
+# 要访问的目标页面
+targetUrl = "http://baidu.com"
+driver = webdriver.PhantomJS(service_args=service_args)
+driver.get(targetUrl)
 
-public class MimvpProxy_FirefoxDriver {
-
-	final static String proxyUri = "103.35.171.77:8080";				// 代理服务器（HTTP, HTTPS）
-	final static String proxySocks = "50.63.167.102:18628";				// 代理服务器（Socks5）
-	final static String mimvpUrl = "http://proxy.mimvp.com/exist.php";	// 爬取网址
-	
-//	final static String firefoxBin = "D:/Program Files/Mozilla Firefox/firefox.exe";			// Windows
-//	final static String firefoxBin = "/usr/bin/firefox-bin";									// Linux
-	final static String firefoxBin = "/Applications/Firefox.app/Contents/MacOS/firefox-bin";	// Mac
-
-	public static void main(String[] args) {
-		getNoProxy();
-		getHttpProxy();
-		getSocksProxy();
-	}
-
-	// 不用代理爬取网页
-	public static void getNoProxy() {
-//		System.setProperty("webdriver.firefox.bin", firefoxBin);	// 不设置也可以
-		
-		FirefoxProfile profile = new FirefoxProfile();
-        
-        // 启动Firefox，抓取网页后，再关闭Firefox
-        FirefoxDriver driver = new FirefoxDriver(profile);
-        driver.get(mimvpUrl);
-		String title = driver.getTitle();
-		System.out.println(title);			// 检测收录 - 米扑代理
-		driver.quit();
-		driver.close();
-	}
-
-	// HTTP和HTTPS代理爬取网页
-	public static void getHttpProxy() {
-		FirefoxProfile profile = new FirefoxProfile();
-		
-		// 设置代理
-		profile.setPreference("network.proxy.type", 1);		// 0 - 不用代理； 1 - 使用代理
-		profile.setPreference("network.proxy.http", proxyUri.split(":")[0]);
-        profile.setPreference("network.proxy.http_port", Integer.parseInt(proxyUri.split(":")[1]));
-        profile.setPreference("network.proxy.ssl", proxyUri.split(":")[0]);
-        profile.setPreference("network.proxy.ssl_port", Integer.parseInt(proxyUri.split(":")[1]));
-        profile.setPreference("network.proxy.no_proxies_on", "localhost");
-        
-//        // 代理设置用户名和密码，无密码的代理无需配置
-//        profile.setPreference("username", "mimvp-user");
-//        profile.setPreference("password", "mimvp-pwd");
-
-        FirefoxDriver driver = new FirefoxDriver(profile);
-        driver.get(mimvpUrl);
-		String title = driver.getTitle();
-		System.out.println(title);			// 检测收录 - 米扑代理
-		driver.close();
-	}
-
-	// Socks5代理爬取网页
-	public static void getSocksProxy() {
-		FirefoxProfile profile = new FirefoxProfile();
-		
-		// 设置代理
-		profile.setPreference("network.proxy.type", 1);		// 0 - 不用代理； 1 - 使用代理
-		profile.setPreference("network.proxy.socks", proxySocks.split(":")[0]);
-	    profile.setPreference("network.proxy.socks_port", Integer.parseInt(proxySocks.split(":")[1]));
-        profile.setPreference("network.proxy.no_proxies_on", "localhost");
-
-        FirefoxDriver driver = new FirefoxDriver(profile);
-        driver.get(mimvpUrl);
-		String title = driver.getTitle();
-		System.out.println(title);			// 检测收录 - 米扑代理
-		driver.close();
-	}
-}
-		
------------------------------------------
-		
-/**
- * Selenum HtmlUnitDriver 支持 http、socks5
- * 
- * 米扑代理示例：
- * http://proxy.mimvp.com/demo2.php
- * 
- * 米扑代理购买：
- * http://proxy.mimvp.com
- * 
- * mimvp.com
- * 2015-11-09
- */
-
-
-package com.mimvp;
-
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.Platform;
-import org.openqa.selenium.Proxy;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
-import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.remote.CapabilityType;
-import org.openqa.selenium.remote.DesiredCapabilities;
-
-import com.gargoylesoftware.htmlunit.DefaultCredentialsProvider;
-import com.gargoylesoftware.htmlunit.WebClient;
-
-public class MimvpProxy_HtmlUnitDriver {
-	final static String proxyUri = "183.222.102.98:8080";				// 代理服务器（HTTP）
-	final static String proxySocks = "103.14.27.174:1080";				// 代理服务器（Socks5）
-	final static String mimvpUrl = "http://proxy.mimvp.com/exist.php";	// 爬取网址
-
-	public static void main(String[] args) {
-		getNoProxy();
-		getHttpProxy();
-		getSocksProxy();
-		getAuthProxy();
-		getBaiduSearch("米扑科技");
-	}
-
-	// 不用代理爬取网页
-	public static void getNoProxy() {
-		HtmlUnitDriver driver = new HtmlUnitDriver(true);	// enable javascript
-		driver.setJavascriptEnabled(true);
-		driver.get(mimvpUrl);
-		String title = driver.getTitle();
-		System.out.println(title);			// 检测收录 - 米扑代理
-	}
-	
-	
-	// HTTP代理爬取网页
-	public static void getHttpProxy() {
-		HtmlUnitDriver driver = new HtmlUnitDriver(true);	// enable javascript
-		
-		// 方法1
-		driver.setProxy(proxyUri.split(":")[0], Integer.parseInt(proxyUri.split(":")[1]));		// proxyUri = "183.222.102.98:8080"
-		
-		// 方式2
-		driver.setHTTPProxy(proxyUri.split(":")[0], Integer.parseInt(proxyUri.split(":")[1]), null);	// proxyUri = "183.222.102.98:8080"
-
-		// 方法3
-		Proxy proxy = new Proxy();
-		proxy.setHttpProxy(proxyUri);		// 设置代理服务器地址, proxyUri = "183.222.102.98:8080"
-		driver.setProxySettings(proxy);
-		
-		driver.get(mimvpUrl);
-		
-		String html = driver.getPageSource();
-		System.out.println(html);
-		String title = driver.getTitle();
-		System.out.println(title);			// 检测收录 - 米扑代理
-	}
-
-	
-	// Socks5代理爬取网页
-	public static void getSocksProxy() {
-		HtmlUnitDriver driver = new HtmlUnitDriver(true);	// enable javascript
-		
-		// 方式1
-		driver.setSocksProxy(proxySocks.split(":")[0], Integer.parseInt(proxySocks.split(":")[1]));			// proxySocks = "183.239.240.138:1080"
-		
-		// 方式2
-		driver.setSocksProxy(proxySocks.split(":")[0], Integer.parseInt(proxySocks.split(":")[1]), null);	// proxySocks = "183.239.240.138:1080"
-		
-		driver.get(mimvpUrl);
-		
-		String html = driver.getPageSource();
-		System.out.println(html);
-		String title = driver.getTitle();
-		System.out.println(title);			// 检测收录 - 米扑代理
-	}
-
-	
-	// 代理需要用户名和密码
-	public static void getAuthProxy() {
-		HtmlUnitDriver driver = null;
-		
-		final String proxyUser = "mimvp-user";
-        final String proxyPass = "mimvp-pwd";
-        
-		Proxy proxy = new Proxy();
-		proxy.setHttpProxy(proxyUri);	
-
-		// 设置代理的用户名和密码
-		DesiredCapabilities capabilities = DesiredCapabilities.htmlUnit();
-		capabilities.setCapability(CapabilityType.PROXY, proxy);
-		capabilities.setJavascriptEnabled(true);
-		capabilities.setPlatform(Platform.WIN8_1);
-		driver = new HtmlUnitDriver(capabilities) {
-			@Override
-			protected WebClient modifyWebClient(WebClient client) {
-				DefaultCredentialsProvider creds = new DefaultCredentialsProvider();
-				creds.addCredentials(proxyUser, proxyPass);
-				client.setCredentialsProvider(creds);
-				return client;
-			}
-		};
-		driver.setJavascriptEnabled(true);	// enable javascript
-		driver.get(mimvpUrl);
-		String title = driver.getTitle();
-		System.out.println(title);			// 检测收录 - 米扑代理
-	}
-
-	
-	// 进行百度搜索
-	public static void getBaiduSearch(String keyword) {
-		final String url = "http://www.baidu.com";
-		WebDriver driver = new HtmlUnitDriver(false);
-		driver.get(url);
-		driver.findElement(By.id("kw")).sendKeys(keyword);
-		Actions action = new Actions(driver);
-		action.sendKeys(Keys.ENTER).perform();
-		String html = driver.getPageSource();
-		System.out.println(html);
-	}
-}
+print driver.title
+print driver.page_source.encode("utf-8")
+driver.quit()
 		
 		</code></pre>
             </section>
