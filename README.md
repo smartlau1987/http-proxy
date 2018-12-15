@@ -9,9 +9,9 @@
 编程语言之代理协议
 ----------
 
-![代理协议汇总](./cssjs/mimvp-proxy-demo-1-lang-proxy-protocol.png)
+![代理协议汇总](./cssjs/1.png)
 
-![编程语言示例](./cssjs/mimvp-proxy-demo-2-lang-proxy-demo.png)
+![编程语言示例](./cssjs/2.png)
      
   
 <br/>     
