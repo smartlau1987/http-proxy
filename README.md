@@ -24,7 +24,7 @@
 #### 1. PHP 设置代理
 
 ```php
-Php http/sock5:
+//Php http/sock5:
 
 // 要访问的目标页面
         $targetUrl = "http://baidu.com";
@@ -74,7 +74,7 @@ Php http/sock5:
 #### 2. Python 设置代理
 
 ```python
-Python http/sock5:
+#Python http/sock5:
 
 #coding=utf-8
 import requests
