@@ -555,7 +555,7 @@ phantomjs --proxy=ip:port --proxy-type=[http|socks5|none] demo.js
 <br/>
 
 
-#### 8. Seleniumpython 设置代理
+#### 8. Selenium 设置代理
 
 ```
 #coding=utf-8
