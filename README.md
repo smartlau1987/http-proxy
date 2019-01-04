@@ -85,7 +85,7 @@ var_dump($result);
 	
 	
 #### 2. Python 设置代理
-
+```
 #!/usr/bin/env python
 #Python http/sock5:
 
@@ -124,7 +124,7 @@ proxies = {
 resp = requests.get(targetUrl, proxies=proxies)
 print resp.status_code
 print resp.text
-	
+```	
 <br/>      
 	
 	
