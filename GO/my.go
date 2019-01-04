@@ -1,81 +1,97 @@
 package main
 
 import (
+	"encoding/base64"
+	_ "encoding/base64"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	_ "strings"
 )
 
-//sock5´úÀí
+//sock5ä»£ç†
 func socksproxy() {
 	urli := url.URL{}
-	urlproxy, _ := urli.Parse("http://²âÊÔip:¶Ë¿Ú")
+	urlproxy, _ := urli.Parse("http://æµ‹è¯•IP:ç«¯å£") //é€šè¿‡http://h.wandouip.com
 	client := &http.Client{
 		Transport: &http.Transport{
 			Proxy: http.ProxyURL(urlproxy),
+
 		},
 	}
-	rqt, err := http.NewRequest("GET", "http://myip.top", nil)
+	rqt, err := http.NewRequest("GET", "http://h.wandouip.com", nil)
 	if err != nil {
-		println("½Ó¿Ú»ñÈ¡IPÊ§°Ü!")
+		println("æ¥å£è·å–IPå¤±è´¥!")
 		return
 	}
-
+	username := "ç”¨æˆ·å"
+	password := "å¯†ç "
+	str := username +":"+ password;
+	basic := base64.StdEncoding.EncodeToString([]byte(str))
+	basic1 :="Basic "
+	value:=basic1+basic
+	//fmt.Print(value);
 	rqt.Header.Add("User-Agent", "Lingjiang")
-	//´¦Àí·µ»Ø½á¹û
+	rqt.Header.Add("Proxy-Authorization",value)
 	response, _ := client.Do(rqt)
 	defer response.Body.Close()
 	body, err := ioutil.ReadAll(response.Body)
 	if err != nil {
 		return
 	}
-
 	fmt.Println("socks5:", string(body))
 	return
 
 }
 
-//http´úÀí
+//httpä»£ç†
 func httpproxy() {
 	urli := url.URL{}
-	urlproxy, _ := urli.Parse("http://²âÊÔip:¶Ë¿Ú")
+	urlproxy, _ := urli.Parse("http://æµ‹è¯•IP:ç«¯å£å·") //é€šè¿‡http://h.wandouip.com/getè·å–
 	client := &http.Client{
 		Transport: &http.Transport{
 			Proxy: http.ProxyURL(urlproxy),
 		},
 	}
-	rqt, err := http.NewRequest("GET", "http://myip.top", nil)
+	rqt, err := http.NewRequest("GET", "http://h.wandouip.com", nil)
 	if err != nil {
-		println("½Ó¿Ú»ñÈ¡IPÊ§°Ü!")
+		println("æ¥å£è·å–IPå¤±è´¥!")
 		return
 	}
-
+	//
+	username := "ç”¨æˆ·å"
+	password := "å¯†ç "
+	str := username +":"+ password;
+	basic := base64.StdEncoding.EncodeToString([]byte(str))
+	basic1 :="Basic "
+	value:=basic1+basic
+	//fmt.Print(value);
 	rqt.Header.Add("User-Agent", "Lingjiang")
-	//´¦Àí·µ»Ø½á¹û
+	rqt.Header.Add("Proxy-Authorization",value)
+	//å¤„ç†è¿”å›ç»“æœ
 	response, _ := client.Do(rqt)
 	defer response.Body.Close()
 	body, err := ioutil.ReadAll(response.Body)
 	if err != nil {
 		return
 	}
-
 	fmt.Println("http:", string(body))
 	return
 
 }
 
-//±¾»úIP
+//æœ¬æœºIP
 func httplocal() {
 	client := &http.Client{}
-	rqt, err := http.NewRequest("GET", "http://myip.top", nil)
+	rqt, err := http.NewRequest("GET", "http://h.wandouip.com", nil)
 	if err != nil {
-		println("½Ó¿Ú»ñÈ¡IPÊ§°Ü!")
+		println("æ¥å£è·å–IPå¤±è´¥!")
 		return
 	}
 
 	rqt.Header.Add("User-Agent", "Lingjiang")
-	//´¦Àí·µ»Ø½á¹û
+	//å¤„ç†è¿”å›ç»“æœ
 	response, _ := client.Do(rqt)
 	defer response.Body.Close()
 	body, err := ioutil.ReadAll(response.Body)
@@ -83,12 +99,12 @@ func httplocal() {
 		return
 	}
 
-	fmt.Println("±¾»ú:", string(body))
+	fmt.Println("æœ¬æœº:", string(body))
 	return
 
 }
 func main() {
-	httplocal()
+	//httplocal()
 	httpproxy()
-	socksproxy()
+	//socksproxy()
 }

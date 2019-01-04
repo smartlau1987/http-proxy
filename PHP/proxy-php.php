@@ -14,29 +14,27 @@
  */
 
 // 要访问的目标页面
-$targetUrl = "http://baidu.com";
+$targetUrl = "http://h.wandouip.com";
 
 // 代理服务器
-$proxyServer = "http://ip:port";
+//$proxyServer = "183.164.88.103:5412"; HTTP
+$proxyServer = "测试IP:端口号";//通过 http://h.wandouip.com/get
 
 // 隧道身份信息
 $ch = curl_init();
-
 curl_setopt($ch, CURLOPT_URL, $targetUrl);
-
 curl_setopt($ch, CURLOPT_HTTPPROXYTUNNEL, false);
-
 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
 // 设置代理服务器
-//        curl_setopt($ch, CURLOPT_PROXYTYPE, 0); //http
-
+//curl_setopt($ch, CURLOPT_PROXYTYPE, 0); //http
 curl_setopt($ch, CURLOPT_PROXYTYPE, 5); //sock5
-
 curl_setopt($ch, CURLOPT_PROXY, $proxyServer);
-
 // 设置隧道验证信息
 curl_setopt($ch, CURLOPT_PROXYAUTH, CURLAUTH_BASIC);
+//curl_setopt($ch, CURLOPT_PROXYAUTH, false);
+
+curl_setopt($ch, CURLOPT_PROXYUSERPWD, "用户名:密码"); //http sockes 代理认证帐号，名称:pwd的格式
 
 curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727;)");
 

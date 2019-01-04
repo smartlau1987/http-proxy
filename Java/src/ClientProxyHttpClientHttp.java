@@ -17,11 +17,10 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-
 public class ClientProxyHttpClientHttp {
 	// 代理服务器
-	final static String proxyHost = "xxx";
-	final static Integer proxyPort = 0;
+	final static String proxyHost = "测试IP";//通过http://h.wandouip.com/get获取
+	final static Integer proxyPort = 端口号;
 
 	private static HttpHost proxy = null;
 
@@ -43,7 +42,7 @@ public class ClientProxyHttpClientHttp {
 
 	public static void doGetRequest() {
 		// 目标地址
-		String targetUrl = "http://httpbin.org/get";
+		String targetUrl = "http://h.wandouip.com";
 
 		try {
 			// 设置url参数 (可选)
@@ -61,7 +60,7 @@ public class ClientProxyHttpClientHttp {
 	public static void doPostRequest() {
 		try {
 			// 要访问的目标页面
-			HttpPost httpPost = new HttpPost("http://httpbin.org/post");
+			HttpPost httpPost = new HttpPost("http://h.wandouip.com");
 
 			// 设置表单参数
 			Map<String, String> formParams = new HashMap<>();
@@ -83,7 +82,7 @@ public class ClientProxyHttpClientHttp {
 	private static void setHeaders(HttpRequestBase httpReq) {
 		httpReq.setHeader("User-Agent",
 				"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.110 Safari/537.36");
-		httpReq.addHeader("xxx", "xxx");
+		httpReq.addHeader("key", "value");
 	}
 
 	/**
