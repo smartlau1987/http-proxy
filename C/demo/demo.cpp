@@ -53,7 +53,7 @@ int GetUrlSocks5(char *url, char *buff,char *out_data)
 	if (curl)
 	{
 		
-		curl_easy_setopt(curl, CURLOPT_PROXY, "socks5://114.105.170.33:4920");//通过http://h.wandouip.com/get获取
+		curl_easy_setopt(curl, CURLOPT_PROXY, "socks5://测试IP:端口");//通过http://h.wandouip.com/get获取
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void*)buff);
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_buff_data);
 		curl_easy_setopt(curl, CURLOPT_URL, url);
